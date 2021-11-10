@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { setCanvasSize, Shape, drawShapesInCanvas, drawShapeInCanvas } from '../utils'
+	import {
+		setCanvasSize,
+		Shape,
+		drawShapesInCanvas,
+		drawShapeInCanvas,
+		chooseRandomColor,
+		ShapeBuilder,
+		buildShape
+	} from '../utils'
 	import { onMount } from 'svelte'
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
 
-	const shapes: Array<Shape> = [
-		{
-			points: [
-				{ x: 10, y: 20 },
-				{ x: 100, y: 20 }
-			],
-			color: 'red',
-			thickness: 2
-		}
-	]
-	let currentShape: Shape | null = null
+	const shapes: Array<Shape> = []
+	let currentShape: ShapeBuilder | null = null
 
 	onMount(() => {
 		ctx = canvas.getContext('2d')
@@ -33,31 +32,22 @@
 		drawShapesInCanvas(ctx, shapes)
 
 		if (currentShape) {
-			drawShapeInCanvas(ctx, currentShape)
+			drawShapeInCanvas(ctx, currentShape.build())
 		}
 	}
 
 	function startDrawing(event: MouseEvent): void {
 		const { clientX, clientY } = event
-
-		currentShape = {
-			points: [{ x: clientX, y: clientY }],
-			color: '#ff0000',
-			thickness: 5
-		}
+		currentShape = buildShape(3).startingAt(clientX, clientY)
 	}
 
 	function moveDrawing(event: MouseEvent): void {
-		if (currentShape !== null) {
-			currentShape.points.push({ x: event.clientX, y: event.clientY })
-		}
+		currentShape?.addPoint(event.clientX, event.clientY)
 	}
 
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
-			currentShape.points.push({ x: event.clientX, y: event.clientY })
-			shapes.push(currentShape)
-			console.log(shapes)
+			shapes.push(currentShape.addPoint(event.clientX, event.clientY).build())
 			currentShape = null
 		}
 	}
