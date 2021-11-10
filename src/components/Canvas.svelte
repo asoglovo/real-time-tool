@@ -1,14 +1,13 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import {
+		buildShape,
+		drawShapeInCanvas,
+		drawShapesInCanvas,
 		setCanvasSize,
 		Shape,
-		drawShapesInCanvas,
-		drawShapeInCanvas,
-		chooseRandomColor,
-		ShapeBuilder,
-		buildShape
+		ShapeBuilder
 	} from '../utils'
-	import { onMount } from 'svelte'
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
