@@ -50,6 +50,10 @@
 			currentShape = null
 		}
 	}
+
+	function terminateDrawing(): void {
+		currentShape = null
+	}
 </script>
 
 <canvas
@@ -57,6 +61,8 @@
 	on:mousedown={startDrawing}
 	on:mousemove={moveDrawing}
 	on:mouseup={endDrawing}
+	on:mouseout={endDrawing}
+	on:blur={terminateDrawing}
 />
 
 <style>
