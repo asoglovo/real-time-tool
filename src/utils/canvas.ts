@@ -1,9 +1,10 @@
-import type { Point, Shape } from './drawing'
+import type { Shape } from './drawing'
+import type { Point } from './point'
 
 export function setCanvasSize(canvas: HTMLCanvasElement): void {
 	const { width, height } = canvas.getBoundingClientRect()
-	canvas.width = width
-	canvas.height = height
+	canvas.width = width * window.devicePixelRatio
+	canvas.height = height * window.devicePixelRatio
 }
 
 export function drawShapesInCanvas(context: CanvasRenderingContext2D, shapes: Shape[]): void {
@@ -21,11 +22,23 @@ export function drawShapeInCanvas(context: CanvasRenderingContext2D, shape: Shap
 
 	const [fistPoint, ...restPoints] = points
 	context.beginPath()
-	context.moveTo(fistPoint.x, fistPoint.y)
+
+	const firstCanvasPoint = pointToCanvasCoords(context.canvas, fistPoint)
+	context.moveTo(firstCanvasPoint.x, firstCanvasPoint.y)
 
 	restPoints.forEach((point: Point) => {
-		context.lineTo(point.x, point.y)
+		const canvasPoint = pointToCanvasCoords(context.canvas, point)
+		context.lineTo(canvasPoint.x, canvasPoint.y)
 	})
 
 	context.stroke()
+}
+
+function pointToCanvasCoords(canvas: HTMLCanvasElement, point: Point): Point {
+	const { left, top } = canvas.getBoundingClientRect()
+
+	return {
+		x: (point.x - left) * window.devicePixelRatio,
+		y: (point.y - top) * window.devicePixelRatio
+	}
 }

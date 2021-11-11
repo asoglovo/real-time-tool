@@ -48,7 +48,7 @@
 
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
-			shapes.push(currentShape.addPoint(event.clientX, event.clientY).simplify().build())
+			shapes.push(currentShape.addPoint(event.clientX, event.clientY).build())
 			currentShape = null
 		}
 	}
@@ -58,6 +58,7 @@
 	}
 </script>
 
+<p>Some message</p>
 <canvas
 	bind:this={canvas}
 	on:mousedown={startDrawing}
