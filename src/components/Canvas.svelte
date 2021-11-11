@@ -9,6 +9,8 @@
 		ShapeBuilder
 	} from '../utils'
 
+	const shapeThickness = 3
+
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
 
@@ -37,7 +39,7 @@
 
 	function startDrawing(event: MouseEvent): void {
 		const { clientX, clientY } = event
-		currentShape = buildShape(3).startingAt(clientX, clientY)
+		currentShape = buildShape(shapeThickness).startingAt(clientX, clientY)
 	}
 
 	function moveDrawing(event: MouseEvent): void {
@@ -46,7 +48,7 @@
 
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
-			shapes.push(currentShape.addPoint(event.clientX, event.clientY).build())
+			shapes.push(currentShape.addPoint(event.clientX, event.clientY).simplify().build())
 			currentShape = null
 		}
 	}
