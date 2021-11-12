@@ -1,9 +1,9 @@
 <script lang="ts">
 	import UserAvatar from './UserAvatar.svelte'
 
-	let myUser = {
-		id: 1,
-		name: 'Glopi'
+	export let user: {
+		id: number
+		name: string
 	}
 
 	let connectedUsers = [
@@ -16,7 +16,7 @@
 
 <ul class="users">
 	<li>
-		<UserAvatar user={myUser} isMe={true} />
+		<UserAvatar {user} isMe={true} />
 	</li>
 	<li>
 		{#each connectedUsers as user (user.id)}

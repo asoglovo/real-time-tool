@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
+	import type { Socket } from 'socket.io-client'
 	import ConnectedUsers from './ConnectedUsers.svelte'
+
+	export let socket: Socket
+	export let user: {
+		id: number
+		name: string
+	}
 
 	const dispatch = createEventDispatcher()
 
@@ -11,7 +18,7 @@
 
 <div class="toolbar">
 	<button on:click={emitClearMine}>Clear Mine</button>
-	<ConnectedUsers />
+	<ConnectedUsers {user} />
 </div>
 
 <style>
