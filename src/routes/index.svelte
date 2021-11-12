@@ -1,13 +1,14 @@
-<script lang="ts">
+
+	<script lang="ts">
 	import { io } from 'socket.io-client'
 	import Toolbar from '../components/Toolbar.svelte'
 	import Canvas from '../components/Canvas.svelte'
-	import { onDestroy, onMount } from 'svelte'
 	import { randomInt, randomName } from '../utils'
 
 	const socket = io('http://localhost:5000')
 
 	let canvas: Canvas
+	let shapes
 	let users = []
 	const myUser = {
 		id: randomInt(1000),
@@ -18,22 +19,32 @@
 		canvas.clearMyDrawings()
 	}
 
-	onMount(() => {
-		socket.emit('connect-user', { user: myUser })
-		socket.on('all-users', ({ connectedUsers }) => {
-			console.log('the users are:', connectedUsers)
-			users = connectedUsers.filter((user) => user.id !== myUser.id)
-		})
+	socket.on('all-users', ({ connectedUsers }) => {
+		console.log('called all users,', connectedUsers)
+		users = connectedUsers.filter(({ id }) => id !== myUser.id)
 	})
 
-	onDestroy(() => {
-		console.log('run on destroy')
-		socket.emit('disconnect-user', { user: myUser })
+	socket.on('all-shapes', (userShapes) => {
+		shapes = Object.keys(userShapes)
+			.filter((userId) => +userId !== myUser.id)
+			.reduce((obj, key) => {
+				obj[key] = userShapes[key]
+				return obj;
+			}, {})
+		console.log(shapes)
 	})
+
+	function emitUserDisconnect(e) {
+		console.log('called', e)
+		socket.emit('disconnect-user', { user: myUser })
+		return ''
+	}
+
 </script>
 
 <Toolbar on:clearMine={clearMyDrawings} {socket} {users} {myUser} />
-<Canvas bind:this={canvas} {socket} />
+<Canvas bind:this={canvas} {myUser} {socket} {shapes} />
+<svelte:window on:beforeunload={emitUserDisconnect} />
 
 <style>
 	:global(body) {

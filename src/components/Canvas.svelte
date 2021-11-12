@@ -18,6 +18,7 @@
 		readonly id: UserId
 		readonly name: string
 	}
+	export let shapes: any
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D

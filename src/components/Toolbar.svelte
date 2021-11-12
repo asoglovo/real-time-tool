@@ -18,10 +18,15 @@
 	function emitClearMine() {
 		dispatch('clearMine')
 	}
+
+	function connectUserToSocket() {
+		socket.emit('connect-user', { user: myUser })
+	}
 </script>
 
 <div class="toolbar">
 	<button on:click={emitClearMine}>Clear Mine</button>
+	<button on:click={connectUserToSocket}>Connect!</button>
 	<ConnectedUsers {users} {myUser} />
 </div>
 
