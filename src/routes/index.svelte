@@ -1,10 +1,16 @@
 <script lang="ts">
 	import Toolbar from '../components/Toolbar.svelte'
 	import Canvas from '../components/Canvas.svelte'
+
+	let canvas: Canvas
+
+	function clearMyDrawings() {
+		canvas.clearMyDrawings()
+	}
 </script>
 
-<Toolbar />
-<Canvas />
+<Toolbar on:clearMine={clearMyDrawings} />
+<Canvas bind:this={canvas} />
 
 <style>
 	:global(body) {

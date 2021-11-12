@@ -8,9 +8,9 @@ export function setCanvasSize(canvas: HTMLCanvasElement): void {
 }
 
 export function drawShapesInCanvas(context: CanvasRenderingContext2D, shapes: Shape[]): void {
-	const { clientWidth, clientHeight } = context.canvas
+	const { width, height } = context.canvas
 
-	context.clearRect(0, 0, clientWidth, clientHeight)
+	context.clearRect(0, 0, width, height)
 	shapes.forEach((shape: Shape) => drawShapeInCanvas(context, shape))
 }
 

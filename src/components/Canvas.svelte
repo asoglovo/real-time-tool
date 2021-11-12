@@ -56,6 +56,10 @@
 	function terminateDrawing(): void {
 		currentShape = null
 	}
+
+	export function clearMyDrawings(): void {
+		shapes.length = 0
+	}
 </script>
 
 <canvas
