@@ -58,7 +58,6 @@
 	}
 </script>
 
-<p>Some message</p>
 <canvas
 	bind:this={canvas}
 	on:mousedown={startDrawing}
