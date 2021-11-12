@@ -33,7 +33,7 @@
 </script>
 
 <Toolbar on:clearMine={clearMyDrawings} {socket} {users} {myUser} />
-<Canvas bind:this={canvas} />
+<Canvas bind:this={canvas} {socket} />
 
 <style>
 	:global(body) {

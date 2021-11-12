@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Socket } from 'socket.io-client'
 	import { onMount } from 'svelte'
 	import {
 		buildShape,
@@ -11,6 +12,12 @@
 
 	const shapeThickness = 3
 	type UserId = number
+
+	export let socket: Socket
+	export let myUser: {
+		readonly id: UserId
+		readonly name: string
+	}
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
@@ -53,7 +60,7 @@
 		if (currentShape !== null) {
 			const newShape = currentShape.addPoint(event.clientX, event.clientY).simplify().build()
 			myShapes.push(newShape)
-			// TODO: send shape through socket
+			socket.emit('shape-created', { userId: myUser.id, shape: newShape })
 
 			currentShape = null
 		}
