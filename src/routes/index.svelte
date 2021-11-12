@@ -5,9 +5,8 @@
 	import { onDestroy, onMount } from 'svelte'
 	import { randomInt, randomName } from '../utils'
 
-	let socket
-	socket = io('http://localhost:5000')
-	
+	const socket = io('http://localhost:5000')
+
 	let canvas: Canvas
 	let users = []
 	const myUser = {
@@ -18,7 +17,6 @@
 	function clearMyDrawings() {
 		canvas.clearMyDrawings()
 	}
-	
 
 	onMount(() => {
 		socket.emit('connect-user', { user: myUser })

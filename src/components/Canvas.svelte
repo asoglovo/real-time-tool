@@ -51,7 +51,10 @@
 
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
-			myShapes.push(currentShape.addPoint(event.clientX, event.clientY).simplify().build())
+			const newShape = currentShape.addPoint(event.clientX, event.clientY).simplify().build()
+			myShapes.push(newShape)
+			// TODO: send shape through socket
+
 			currentShape = null
 		}
 	}
