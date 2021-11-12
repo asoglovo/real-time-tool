@@ -48,7 +48,7 @@
 
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
-			shapes.push(currentShape.addPoint(event.clientX, event.clientY).build())
+			shapes.push(currentShape.addPoint(event.clientX, event.clientY).simplify().build())
 			currentShape = null
 		}
 	}
