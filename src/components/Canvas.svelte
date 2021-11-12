@@ -18,14 +18,17 @@
 		readonly id: UserId
 		readonly name: string
 	}
-	export let shapes: any
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
 
 	const myShapes: Array<Shape> = []
-	const otherUsersShapes: Record<UserId, Shape[]> = {}
+	let otherUsersShapes: Record<UserId, Shape[]> = {}
 	let currentShape: ShapeBuilder | null = null
+
+	socket.on('all-shapes', (userShapes: Record<UserId, Shape[]>) => {
+		otherUsersShapes = userShapes
+	})
 
 	onMount(() => {
 		ctx = canvas.getContext('2d')

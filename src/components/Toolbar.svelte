@@ -19,14 +19,19 @@
 		dispatch('clearMine')
 	}
 
-	function connectUserToSocket() {
-		socket.emit('connect-user', { user: myUser })
+	function clearAll() {
+		dispatch('clearAll')
 	}
+
+	// function connectUserToSocket() {
+	// 	socket.emit('connect-user', { user: myUser })
+	// }
 </script>
 
 <div class="toolbar">
 	<button on:click={emitClearMine}>Clear Mine</button>
-	<button on:click={connectUserToSocket}>Connect!</button>
+	<button on:click={clearAll}>Clear All</button>
+	<!-- <button on:click={connectUserToSocket}>Connect!</button> -->
 	<ConnectedUsers {users} {myUser} />
 </div>
 

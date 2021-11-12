@@ -1,51 +1,71 @@
-
-	<script lang="ts">
+<script lang="ts">
 	import { io } from 'socket.io-client'
-	import Toolbar from '../components/Toolbar.svelte'
+	import { onMount } from 'svelte'
 	import Canvas from '../components/Canvas.svelte'
-	import { randomInt, randomName } from '../utils'
+	import Toolbar from '../components/Toolbar.svelte'
+	import {
+		getUserFromLocalStorage,
+		isUserInLocalStorage,
+		randomInt,
+		randomName,
+		saveUserToLocalStorage,
+		User
+	} from '../utils'
 
-	const socket = io('http://localhost:5000')
+	const socket = io('http://localhost:5001')
 
 	let canvas: Canvas
-	let shapes
-	let users = []
-	const myUser = {
-		id: randomInt(1000),
-		name: randomName()
-	}
+	let users: User[] = []
+	let myUser: User | undefined
+
+	onMount(() => {
+		if (isUserInLocalStorage()) {
+			myUser = getUserFromLocalStorage()
+		} else {
+			myUser = {
+				id: randomInt(Number.MAX_SAFE_INTEGER),
+				name: randomName()
+			}
+
+			saveUserToLocalStorage(myUser)
+		}
+
+		socket.emit('connect-user', { user: myUser })
+
+		socket.on('all-users', ({ connectedUsers }) => {
+			console.log('called all users,', connectedUsers)
+			users = connectedUsers.filter(({ id }) => id !== myUser.id)
+		})
+	})
 
 	function clearMyDrawings() {
 		canvas.clearMyDrawings()
 	}
 
-	socket.on('all-users', ({ connectedUsers }) => {
-		console.log('called all users,', connectedUsers)
-		users = connectedUsers.filter(({ id }) => id !== myUser.id)
-	})
-
-	socket.on('all-shapes', (userShapes) => {
-		shapes = Object.keys(userShapes)
-			.filter((userId) => +userId !== myUser.id)
-			.reduce((obj, key) => {
-				obj[key] = userShapes[key]
-				return obj;
-			}, {})
-		console.log(shapes)
-	})
-
-	function emitUserDisconnect(e) {
-		console.log('called', e)
-		socket.emit('disconnect-user', { user: myUser })
-		return ''
+	function clearAllDrawings() {
+		clearMyDrawings()
+		socket.emit('clear-drawings')
 	}
 
+	// function emitUserDisconnect(e) {
+	// 	console.log('called', e)
+	// 	socket.emit('disconnect-user', { user: myUser })
+	// 	return ''
+	// }
 </script>
 
-<Toolbar on:clearMine={clearMyDrawings} {socket} {users} {myUser} />
-<Canvas bind:this={canvas} {myUser} {socket} {shapes} />
-<svelte:window on:beforeunload={emitUserDisconnect} />
+{#if !!myUser}
+	<Toolbar
+		on:clearMine={clearMyDrawings}
+		on:clearAll={clearAllDrawings}
+		{socket}
+		{users}
+		{myUser}
+	/>
+	<Canvas bind:this={canvas} {myUser} {socket} />
+{/if}
 
+<!-- <svelte:window on:beforeunload={emitUserDisconnect} /> -->
 <style>
 	:global(body) {
 		margin: 0;
