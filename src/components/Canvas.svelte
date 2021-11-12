@@ -10,11 +10,13 @@
 	} from '../utils'
 
 	const shapeThickness = 3
+	type UserId = number
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
 
-	const shapes: Array<Shape> = []
+	const myShapes: Array<Shape> = []
+	const otherUsersShapes: Record<UserId, Shape[]> = {}
 	let currentShape: ShapeBuilder | null = null
 
 	onMount(() => {
@@ -30,7 +32,8 @@
 	}
 
 	function renderShapes(): void {
-		drawShapesInCanvas(ctx, shapes)
+		drawShapesInCanvas(ctx, myShapes)
+		Object.values(otherUsersShapes).forEach((shapes) => drawShapesInCanvas(ctx, shapes))
 
 		if (currentShape) {
 			drawShapeInCanvas(ctx, currentShape.build())
@@ -48,7 +51,7 @@
 
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
-			shapes.push(currentShape.addPoint(event.clientX, event.clientY).simplify().build())
+			myShapes.push(currentShape.addPoint(event.clientX, event.clientY).simplify().build())
 			currentShape = null
 		}
 	}
@@ -58,7 +61,7 @@
 	}
 
 	export function clearMyDrawings(): void {
-		shapes.length = 0
+		myShapes.length = 0
 	}
 </script>
 
