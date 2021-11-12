@@ -2,26 +2,39 @@
 	import { io } from 'socket.io-client'
 	import Toolbar from '../components/Toolbar.svelte'
 	import Canvas from '../components/Canvas.svelte'
-	import { onMount } from 'svelte'
+	import { onDestroy, onMount } from 'svelte'
 	import { randomInt, randomName } from '../utils'
 
-	const socket = io("http://localhost:5000")
+	let socket
+	socket = io('http://localhost:5000')
+	
 	let canvas: Canvas
-	const randomUser = {
-			id: randomInt(1000),
-			name: randomName()
-		}
+	let users = []
+	const myUser = {
+		id: randomInt(1000),
+		name: randomName()
+	}
 
 	function clearMyDrawings() {
 		canvas.clearMyDrawings()
 	}
+	
 
 	onMount(() => {
-		socket.emit('connection-user')
+		socket.emit('connect-user', { user: myUser })
+		socket.on('all-users', ({ connectedUsers }) => {
+			console.log('the users are:', connectedUsers)
+			users = connectedUsers.filter((user) => user.id !== myUser.id)
+		})
+	})
+
+	onDestroy(() => {
+		console.log('run on destroy')
+		socket.emit('disconnect-user', { user: myUser })
 	})
 </script>
 
-<Toolbar on:clearMine={clearMyDrawings} {socket} user={randomUser} />
+<Toolbar on:clearMine={clearMyDrawings} {socket} {users} {myUser} />
 <Canvas bind:this={canvas} />
 
 <style>

@@ -4,7 +4,11 @@
 	import ConnectedUsers from './ConnectedUsers.svelte'
 
 	export let socket: Socket
-	export let user: {
+	export let users: {
+		id: number
+		name: string
+	}[]
+	export let myUser: {
 		id: number
 		name: string
 	}
@@ -18,7 +22,7 @@
 
 <div class="toolbar">
 	<button on:click={emitClearMine}>Clear Mine</button>
-	<ConnectedUsers {user} />
+	<ConnectedUsers {users} {myUser} />
 </div>
 
 <style>

@@ -1,26 +1,24 @@
 <script lang="ts">
 	import UserAvatar from './UserAvatar.svelte'
 
-	export let user: {
+	export let users: {
+		id: number
+		name: string
+	}[]
+
+	export let myUser: {
 		id: number
 		name: string
 	}
-
-	let connectedUsers = [
-		{
-			id: 2,
-			name: 'John Doe'
-		}
-	]
 </script>
 
 <ul class="users">
 	<li>
-		<UserAvatar {user} isMe={true} />
+		<UserAvatar user={myUser} isMe={true} />
 	</li>
 	<li>
-		{#each connectedUsers as user (user.id)}
-			<UserAvatar {user} isMe={false} />
+		{#each users as user (user.id)}
+			<UserAvatar user={user} isMe={false} />
 		{/each}
 	</li>
 </ul>
