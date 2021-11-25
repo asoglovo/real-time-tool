@@ -7,30 +7,35 @@
 		drawShapesInCanvas,
 		setCanvasSize,
 		Shape,
-		ShapeBuilder
+		ShapeBuilder,
+		User
 	} from '../utils'
 
 	const shapeThickness = 3
 	type UserId = number
 
 	export let socket: Socket
-	export let myUser: {
-		readonly id: UserId
-		readonly name: string
-	}
+	export let myUser: User
 
 	let canvas: HTMLCanvasElement
 	let ctx: CanvasRenderingContext2D
 
-	const myShapes: Array<Shape> = []
-	let otherUsersShapes: Record<UserId, Shape[]> = {}
+	let shapesByUser: Record<UserId, Shape[]> = {}
 	let currentShape: ShapeBuilder | null = null
 
 	socket.on('all-shapes', (userShapes: Record<UserId, Shape[]>) => {
-		otherUsersShapes = userShapes
+		// myShapes = userShapes[myUser.id] ?? myShapes
+		shapesByUser = userShapes
+
+		if (!(myUser.id in shapesByUser)) {
+			shapesByUser[myUser.id] = []
+		}
+		console.log(shapesByUser)
 	})
 
 	onMount(() => {
+		shapesByUser[myUser.id] = []
+
 		ctx = canvas.getContext('2d')
 		setCanvasSize(canvas)
 
@@ -43,8 +48,7 @@
 	}
 
 	function renderShapes(): void {
-		drawShapesInCanvas(ctx, myShapes)
-		Object.values(otherUsersShapes).forEach((shapes) => drawShapesInCanvas(ctx, shapes))
+		Object.values(shapesByUser).forEach((shapes: Shape[]) => drawShapesInCanvas(ctx, shapes))
 
 		if (currentShape) {
 			drawShapeInCanvas(ctx, currentShape.build())
@@ -63,7 +67,7 @@
 	function endDrawing(event: MouseEvent): void {
 		if (currentShape !== null) {
 			const newShape = currentShape.addPoint(event.clientX, event.clientY).simplify().build()
-			myShapes.push(newShape)
+			shapesByUser[myUser.id].push(newShape)
 			socket.emit('shape-created', { userId: myUser.id, shape: newShape })
 
 			currentShape = null
@@ -75,7 +79,8 @@
 	}
 
 	export function clearMyDrawings(): void {
-		myShapes.length = 0
+		shapesByUser[myUser.id] = []
+		// TODO: emit to socket
 	}
 </script>
 
