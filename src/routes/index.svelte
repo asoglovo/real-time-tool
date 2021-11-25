@@ -33,7 +33,6 @@
 		socket.emit('connect-user', { user: myUser })
 
 		socket.on('all-users', ({ connectedUsers }) => {
-			console.log('called all users,', connectedUsers)
 			users = connectedUsers.filter(({ id }) => id !== myUser.id)
 		})
 	})
